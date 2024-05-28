@@ -51,7 +51,7 @@
       <div class="card-body text-center">
         <h5 class="card-title product-title">{{ product.name }}</h5>
         <p class="card-text text-muted">${{ product.price }}</p>
-        <form method="POST" action="{% url 'add_to_cart' %}">
+        <form method="POST" action="{% url 'add_to_cart' %}" id="form-{{ product.id }}">
           {% csrf_token %}
           <input type="hidden" name="product_id" value="{{ product.id }}">
           <input type="number" name="quantity" min="1" value="1" class="form-control mb-2">
@@ -62,4 +62,24 @@
   </div>
   {% endfor %}
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const forms = document.querySelectorAll('form');
+
+    forms.forEach(form => {
+      form.addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const productId = this.querySelector('input[name="product_id"]').value;
+        const productName = this.closest('.card').querySelector('.product-title').textContent.trim();
+
+        // Modify the form action URL to include the product name
+        this.action = `{% url 'add_to_cart' %}${encodeURIComponent(productId)}/`;
+
+        this.submit(); // Submit the form with the new action
+      });
+    });
+  });
+</script>
 {% endblock %}
