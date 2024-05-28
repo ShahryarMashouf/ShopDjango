@@ -1,21 +1,65 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Products</h1>
-    <div class="row">
-        {% for product in products %}
-        <div class= "col">
-            <div class="card" style="width: 18rem;">
-            <img src="{{ product.image_url }}" class="card-img-top" alt="...">
-            <div class="card-body">
-              <h5 class="card-title">{{ product.name}}</h5>
-              <p class="card-text">${{ product.price}}</p>
-              <a href="#" class="btn btn-primary">Add to cart</a>
-            </div>
-          </div>
-        </div>
-          {% endfor %}
+<style>
+  .product-title {
+    font-family: "Roboto", sans-serif;
+    color: #343a40;
+    font-size: 1.5rem;
+    transition: color 0.3s;
+  }
+
+  .product-title:hover {
+    color: #007bff;
+  }
+
+  .card {
+    border: none;
+    border-radius: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .card-img-top {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .btn-custom {
+    background: linear-gradient(45deg, #007bff, #00d4ff);
+    color: white;
+    border: none;
+    transition: background 0.3s;
+  }
+
+  .btn-custom:hover {
+    background: linear-gradient(45deg, #00d4ff, #007bff);
+  }
+</style>
+<h1 class="text-center my-4">Our Awesome Products</h1>
+<div class="row justify-content-center">
+  {% for product in products %}
+  <div class="col-md-4 mb-4 d-flex align-items-stretch">
+    <div class="card">
+      <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" />
+      <div class="card-body text-center">
+        <h5 class="card-title product-title">{{ product.name }}</h5>
+        <p class="card-text text-muted">${{ product.price }}</p>
+        <form method="POST" action="{% url 'add_to_cart' %}">
+          {% csrf_token %}
+          <input type="hidden" name="product_id" value="{{ product.id }}">
+          <input type="number" name="quantity" min="1" value="1" class="form-control mb-2">
+          <button type="submit" class="btn btn-custom btn-sm">Add to cart</button>
+        </form>
+      </div>
     </div>
-
-
+  </div>
+  {% endfor %}
+</div>
 {% endblock %}
